@@ -1,10 +1,10 @@
+# OpenStack Installation Guideline
 
-
-##Requirements
+## Requirements
 Disk=20G
 Memory=4G
 
-##Turn Off Services
+## Turn Off Services
 systemctl stop firewalld
 systemctl disable firewalld
 systemctl stop NetworkManager
@@ -12,20 +12,20 @@ systemctl disable NetworkManager
 systemctl enable network
 systemctl start network
 
-##disable selinux from it's config file
+## Disable selinux from it's config file
 vi /etc/selinux/config
 SELINUX=disabled
 reboot
 getenforce
 
-##RHEL
+## RHEL
 sudo yum install -y https://rdoproject.org/repos/rdo-release.rpm
 
-##CentOS Install OpenStack Package
+## CentOS Install OpenStack Package
 sudo yum install -y centos-release-openstack-ocata
 sudo yum update -y
 
-##Run packstack installer
+## Run packstack installer
 packstack --allinone --provision-demo=n --os-neutron-ovs-bridge-mappings=extnet:br-ex --os-neutron-ml2-type-drivers=xvlan,flat
 
 ## Make Interface Layer 2 Bridge Port
@@ -55,24 +55,24 @@ ONBOOT=yes
 
 service network restart
 
-##OpenStack admin privileges
+## OpenStack admin privileges
 source keystonerc_admin
 
-##Create Provider Network
+## Create Provider Network
 Create provider network instances to communicate with outside world
 neutron net-create external_network --provider:network_type flat --provider:physical_network extnet --router:external
 
-##Create Subnet attached to provider network
+## Create Subnet attached to provider network
 neutron subnet-create --name public_subnet --enable-dhcp=False --allocation-pool start=192.168.0.100,end=192.168.0.120 --gateway=192.168.0.1 external_network=192.168.0.0/24
 
 
-#Verify OpenStack Installation
+## Verify OpenStack Installation
 yum install -y openstack-rally
 rally-manage db recreate
 source keystonerc_admin
 rally deployment create --fromenv --name=existing
 
-#Horizon Dashboard
+## Horizon Dashboard
 go to http://192.168.0.108
 admin
 passwd:e8b28cc0115b400b
